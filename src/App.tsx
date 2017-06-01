@@ -1,20 +1,43 @@
 import * as React from 'react';
-import './App.css';
+import styled from 'styled-components';
+
+const AppWrapper = styled.div`
+  height: 100%;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+`;
+
+const Options = styled.div`
+  padding: 10px;
+`;
+
+const TextWrapper = styled.div`
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+`;
+
+const TextArea = styled.textarea`
+  display: block;
+  flex-grow: 1;
+  resize: none;
+`;
 
 class App extends React.Component<{}, null> {
   render() {
     return (
-      <div className="App">
-        <div className="text-holder">
-          <textarea className="usertext" id="from" />
-        </div>
-        <div className="options">
-          <button id="convert">Convert</button>
-        </div>
-        <div className="text-holder">
-          <textarea className="usertext" id="to" />
-        </div>
-      </div>
+      <AppWrapper>
+        <TextWrapper>
+          <TextArea />
+        </TextWrapper>
+        <Options>
+          <button>Convert</button>
+        </Options>
+        <TextWrapper>
+          <TextArea />
+        </TextWrapper>
+      </AppWrapper>
     );
   }
 }
