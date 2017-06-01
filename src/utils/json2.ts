@@ -2,7 +2,7 @@ type Partial<T> = {
   [P in keyof T]?: T[P];
 };
 
-export interface IJson2TsConfig {
+interface IJson2TsConfigPrivate {
   prependWithI: boolean;
   sortAlphabetically: boolean;
   addExport: boolean;
@@ -10,9 +10,11 @@ export interface IJson2TsConfig {
   rootObjectName: string;
 }
 
+export type IJson2TsConfig = Partial<IJson2TsConfigPrivate>;
+
 export class Json2Ts {
 
-  private config: IJson2TsConfig;
+  private config: IJson2TsConfigPrivate;
 
   private interfaces: {
     [name: string]: {
@@ -21,7 +23,7 @@ export class Json2Ts {
   } = {};
 
   constructor(
-    config: Partial<IJson2TsConfig> = {}
+    config: IJson2TsConfig = {}
   ) {
     this.config = {
       prependWithI: true,
@@ -84,8 +86,9 @@ export class Json2Ts {
     if (obj === null) {
       return 'any';
     }
-    if (this.config.prependWithI) {
-      type = `I${type}`;
+    const { prependWithI, prefix } = this.config;
+    if (prependWithI) {
+      type = `I${prefix || ''}${type}`;
     }
     if (!this.interfaces[type]) {
       this.interfaces[type] = {};

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { Json2Ts } from './utils/json2';
+import { Json2Ts, IJson2TsConfig } from './utils/json2';
 import { Button, Form, TextArea, Segment, Divider } from 'semantic-ui-react';
 
 const AppWrapper = styled.div`
@@ -31,7 +31,7 @@ const Options = styled.div`
 `;
 
 const StyledForm = styled(Form) `
-  flex-grow: 1;
+  flex-grow: ${props => props.flex || 1};
   display: flex;
   flex-direction: column;
 `;
@@ -52,6 +52,7 @@ interface IAppState {
   jsonInput: string;
   resultOutput: string;
   errorMessage: string;
+  config: IJson2TsConfig;
 }
 
 class App extends React.Component<{}, IAppState> {
@@ -59,12 +60,19 @@ class App extends React.Component<{}, IAppState> {
   state = {
     jsonInput: '',
     resultOutput: '',
-    errorMessage: ''
+    errorMessage: '',
+    config: {
+      prependWithI: true,
+      sortAlphabetically: false,
+      addExport: false,
+      prefix: '',
+      rootObjectName: 'RootObject'
+    }
   };
 
   convertJsonToTs = (e: React.SyntheticEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    const json2ts = new Json2Ts({});
+    const json2ts = new Json2Ts(this.state.config);
     this.setState({
       errorMessage: ''
     });
@@ -89,35 +97,79 @@ class App extends React.Component<{}, IAppState> {
     });
   }
 
+  onOptionsFieldChange = (
+    e: React.ChangeEvent<HTMLInputElement>, data: { name?: string, checked?: boolean } | undefined = void 0) => {
+    const target = e.target;
+    const value = data ? data.checked : target.value;
+    const name = data ? data.name : target.name;
+    if (name) {
+      this.setState({
+        config: {
+          ...this.state.config,
+          [name]: value
+        }
+      });
+    }
+  }
+
   render() {
+    const { resultOutput, errorMessage, config } = this.state;
     return (
       <AppWrapper>
         <Left>
-          <StyledForm>
+          <StyledForm flex={1}>
             <StyledTextArea onChange={this.onJsonInputChange} />
           </StyledForm>
           <Divider />
-          <StyledForm>
-            <StyledTextArea value={this.state.resultOutput} />
+          <StyledForm flex={3}>
+            <StyledTextArea value={resultOutput} />
           </StyledForm>
         </Left>
         <Right>
           <Segment>
             <Options>
               <Form>
-                <Form.Checkbox label="Prepend with I" toggle={true} />
-                <Form.Checkbox label="Sort Aphabetically" toggle={true} />
-                <Form.Checkbox label="Add export statement" toggle={true} />
+                <Form.Checkbox
+                  name="prependWithI"
+                  checked={config.prependWithI}
+                  label="Prepend with I"
+                  onChange={this.onOptionsFieldChange}
+                  toggle={true}
+                />
+                <Form.Checkbox
+                  name="sortAlphabetically"
+                  checked={config.sortAlphabetically}
+                  label="Sort Aphabetically"
+                  onChange={this.onOptionsFieldChange}
+                  toggle={true}
+                />
+                <Form.Checkbox
+                  name="addExport"
+                  checked={config.addExport}
+                  label="Add export statement"
+                  onChange={this.onOptionsFieldChange}
+                  toggle={true}
+                />
                 <Divider />
                 <Form.Field>
-                  <input placeholder="Interface prexix" />
+                  <input
+                    name="prefix"
+                    value={config.prefix}
+                    onChange={this.onOptionsFieldChange}
+                    placeholder="Interface prexix"
+                  />
                 </Form.Field>
                 <Form.Field>
-                  <input placeholder="Root object name" />
+                  <input
+                    name="rootObjectName"
+                    value={config.rootObjectName}
+                    onChange={this.onOptionsFieldChange}
+                    placeholder="Root object name"
+                  />
                 </Form.Field>
                 <Divider />
                 <Button onClick={this.convertJsonToTs}>Convert</Button>
-                {this.state.errorMessage && (<div>{this.state.errorMessage}</div>)}
+                {errorMessage && (<div>{errorMessage}</div>)}
               </Form>
             </Options>
           </Segment>
