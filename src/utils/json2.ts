@@ -1,6 +1,6 @@
 type Partial<T> = {
   [P in keyof T]?: T[P];
-}
+};
 
 export interface IJson2TsConfig {
   prependWithI: boolean;
