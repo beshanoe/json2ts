@@ -9,6 +9,8 @@
     "@types/react-dom": "^15.5.0",
     "react": "^15.5.4",
     "react-dom": "^15.5.4",
+    "semantic-ui-css": "^2.2.10",
+    "semantic-ui-react": "^0.68.4",
     "styled-components": "^2.0.0"
   },
   "devDependencies": {

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { injectGlobal } from 'styled-components';
+import 'semantic-ui-css/themes/../semantic.min.css';
 import App from './App';
 
 // tslint:disable-next-line:no-unused-expression

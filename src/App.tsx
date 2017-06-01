@@ -1,29 +1,51 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import { Json2Ts } from './utils/json2';
+import { Button, Form, TextArea, Segment, Divider } from 'semantic-ui-react';
 
 const AppWrapper = styled.div`
   width: 60%;
   height: 100%;
-  padding: 20px;
+  display: flex;
+  flex-direction: row;
+`;
+
+const Left = styled.div`
   display: flex;
   flex-direction: column;
+  flex-grow: 4;
+  padding: 20px;
+`;
+
+const Right = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  padding: 20px;
+  padding-left: 0;
 `;
 
 const Options = styled.div`
-  padding: 10px;
+  display: flex;
+  flex-direction: column;
 `;
 
-const TextWrapper = styled.div`
+const StyledForm = styled(Form) `
   flex-grow: 1;
   display: flex;
   flex-direction: column;
 `;
 
-const TextArea = styled.textarea`
-  display: block;
-  flex-grow: 1;
-  resize: none;
+const StyledTextArea = styled(TextArea) `
+  .ui.form.ui.form & {
+    display: block;
+    flex-grow: 1;
+    resize: none;
+    font-family: monospace;
+    height: initial;
+    max-height: initial;
+    min-height: initial;
+  }
 `;
 
 interface IAppState {
@@ -40,7 +62,8 @@ class App extends React.Component<{}, IAppState> {
     errorMessage: ''
   };
 
-  convertJsonToTs = () => {
+  convertJsonToTs = (e: React.SyntheticEvent<HTMLButtonElement>) => {
+    e.preventDefault();
     const json2ts = new Json2Ts({});
     this.setState({
       errorMessage: ''
@@ -56,7 +79,7 @@ class App extends React.Component<{}, IAppState> {
         errorMessage: e.message
       });
     }
-    
+
   }
 
   onJsonInputChange = (e: React.SyntheticEvent<HTMLTextAreaElement>) => {
@@ -69,16 +92,36 @@ class App extends React.Component<{}, IAppState> {
   render() {
     return (
       <AppWrapper>
-        <TextWrapper>
-          <TextArea onChange={this.onJsonInputChange} />
-        </TextWrapper>
-        <Options>
-          <button onClick={this.convertJsonToTs}>Convert</button>
-          <div>{this.state.errorMessage}</div>
-        </Options>
-        <TextWrapper>
-          <TextArea value={this.state.resultOutput} />
-        </TextWrapper>
+        <Left>
+          <StyledForm>
+            <StyledTextArea onChange={this.onJsonInputChange} />
+          </StyledForm>
+          <Divider />
+          <StyledForm>
+            <StyledTextArea value={this.state.resultOutput} />
+          </StyledForm>
+        </Left>
+        <Right>
+          <Segment>
+            <Options>
+              <Form>
+                <Form.Checkbox label="Prepend with I" toggle={true} />
+                <Form.Checkbox label="Sort Aphabetically" toggle={true} />
+                <Form.Checkbox label="Add export statement" toggle={true} />
+                <Divider />
+                <Form.Field>
+                  <input placeholder="Interface prexix" />
+                </Form.Field>
+                <Form.Field>
+                  <input placeholder="Root object name" />
+                </Form.Field>
+                <Divider />
+                <Button onClick={this.convertJsonToTs}>Convert</Button>
+                {this.state.errorMessage && (<div>{this.state.errorMessage}</div>)}
+              </Form>
+            </Options>
+          </Segment>
+        </Right>
       </AppWrapper>
     );
   }

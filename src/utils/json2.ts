@@ -1,11 +1,18 @@
-export interface IJson2TsOptions {
-  prependWithI?: boolean;
-  sortAlphabetically?: boolean;
-  addExport?: boolean;
-  prefix?: string;
+type Partial<T> = {
+  [P in keyof T]?: T[P];
+}
+
+export interface IJson2TsConfig {
+  prependWithI: boolean;
+  sortAlphabetically: boolean;
+  addExport: boolean;
+  prefix: string;
+  rootObjectName: string;
 }
 
 export class Json2Ts {
+
+  private config: IJson2TsConfig;
 
   private interfaces: {
     [name: string]: {
@@ -14,8 +21,17 @@ export class Json2Ts {
   } = {};
 
   constructor(
-    private config: IJson2TsOptions = {}
-  ) {}
+    config: Partial<IJson2TsConfig> = {}
+  ) {
+    this.config = {
+      prependWithI: true,
+      sortAlphabetically: false,
+      addExport: false,
+      prefix: '',
+      rootObjectName: 'RootObject',
+      ...config
+    };
+  }
 
   convert(json: {}) {
     this.interfaces = {};
@@ -64,9 +80,12 @@ export class Json2Ts {
     return [first.toUpperCase(), ...rest].join('');
   }
 
-  private objectToTS(obj: {}, type: string = 'RootObject') {
+  private objectToTS(obj: {}, type: string = this.config.rootObjectName) {
     if (obj === null) {
       return 'any';
+    }
+    if (this.config.prependWithI) {
+      type = `I${type}`;
     }
     if (!this.interfaces[type]) {
       this.interfaces[type] = {};
@@ -83,9 +102,9 @@ export class Json2Ts {
   }
 
   private interfacesToString() {
-    const { prependWithI, sortAlphabetically, addExport } = this.config;
+    const { sortAlphabetically, addExport } = this.config;
     return Object.keys(this.interfaces).map(name => {
-      const interfaceStr = [`${addExport ? 'export ' : ''}interface ${prependWithI ? 'I' : ''}${name} {`];
+      const interfaceStr = [`${addExport ? 'export ' : ''}interface ${name} {`];
       const fields = Object.keys(this.interfaces[name]);
       if (sortAlphabetically) {
         fields.sort();
