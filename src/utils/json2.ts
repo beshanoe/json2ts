@@ -21,6 +21,7 @@ export class Json2Ts {
     this.interfaces = {};
     let result = `type JSON = ${this.unknownToTS(json)}\n\n`;
     result += this.interfacesToString();
+    return result;
   }
 
   private unknownToTS(value: {}, key: string | undefined = void 0) {
