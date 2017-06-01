@@ -1,7 +1,7 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import { Json2Ts, IJson2TsConfig } from './utils/json2';
-import { Button, Form, TextArea, Segment, Divider } from 'semantic-ui-react';
+import { Button, Form, TextArea, Segment, Divider, Label } from 'semantic-ui-react';
 
 const AppWrapper = styled.div`
   width: 60%;
@@ -118,10 +118,16 @@ class App extends React.Component<{}, IAppState> {
       <AppWrapper>
         <Left>
           <StyledForm flex={1}>
+            <div>
+              <Label basic={true} color="orange" pointing="below">Paste your JSON here</Label>
+            </div>
             <StyledTextArea onChange={this.onJsonInputChange} />
           </StyledForm>
           <Divider />
           <StyledForm flex={3}>
+            <div>
+              <Label basic={true} color="teal" pointing="below">See result here</Label>
+            </div>
             <StyledTextArea value={resultOutput} />
           </StyledForm>
         </Left>
