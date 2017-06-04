@@ -57,18 +57,22 @@ interface IAppState {
 
 class App extends React.Component<{}, IAppState> {
 
-  state = {
-    jsonInput: '',
-    resultOutput: '',
-    errorMessage: '',
-    config: {
-      prependWithI: true,
-      sortAlphabetically: false,
-      addExport: false,
-      prefix: '',
-      rootObjectName: 'RootObject'
-    }
-  };
+  constructor() {
+    super();
+    this.state = {
+      jsonInput: '',
+      resultOutput: '',
+      errorMessage: '',
+      config: {
+        prependWithI: true,
+        sortAlphabetically: false,
+        addExport: false,
+        useArrayGeneric: false,
+        prefix: '',
+        rootObjectName: 'RootObject'
+      }
+    };
+  }
 
   convertJsonToTs = (e: React.SyntheticEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -153,6 +157,13 @@ class App extends React.Component<{}, IAppState> {
                   name="addExport"
                   checked={config.addExport}
                   label="Add export statement"
+                  onChange={this.onOptionsFieldChange}
+                  toggle={true}
+                />
+                <Form.Checkbox
+                  name="useArrayGeneric"
+                  checked={config.useArrayGeneric}
+                  label="Use Array<> notation"
                   onChange={this.onOptionsFieldChange}
                   toggle={true}
                 />

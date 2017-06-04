@@ -6,6 +6,7 @@ interface IJson2TsConfigPrivate {
   prependWithI: boolean;
   sortAlphabetically: boolean;
   addExport: boolean;
+  useArrayGeneric: boolean;
   prefix: string;
   rootObjectName: string;
 }
@@ -29,6 +30,7 @@ export class Json2Ts {
       prependWithI: true,
       sortAlphabetically: false,
       addExport: false,
+      useArrayGeneric: false,
       prefix: '',
       rootObjectName: 'RootObject',
       ...config
@@ -65,7 +67,7 @@ export class Json2Ts {
         type = itemType;
       }
     }
-    return `${type}[]`;
+    return this.config.useArrayGeneric ? `Array<${type}>` : `${type}[]`;
   }
 
   private keyToTypeName(key: string | undefined = void 0) {
