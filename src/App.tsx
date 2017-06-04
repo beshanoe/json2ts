@@ -1,27 +1,42 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import { Json2Ts, IJson2TsConfig } from './utils/json2';
-import { Button, Form, TextArea, Segment, Divider, Label } from 'semantic-ui-react';
+import { Button, Form, TextArea, Segment, Divider, Icon } from 'semantic-ui-react';
 
 const AppWrapper = styled.div`
-  width: 60%;
+  width: 70%;
   height: 100%;
   display: flex;
+  flex-direction: column;
+`;
+
+const Header = styled.div`
+  display: flex;
   flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+`;
+
+const Main = styled.div`
+  display: flex;
+  flex-direction: row;
+  flex-grow: 1;
+  margin-bottom: 20px;
 `;
 
 const Left = styled.div`
   display: flex;
   flex-direction: column;
   flex-grow: 4;
-  padding: 20px;
+  margin-right: 20px;
 `;
 
 const Right = styled.div`
   display: flex;
   flex-direction: column;
   flex-grow: 1;
-  padding: 20px;
+  flex-basis: 25%;
   padding-left: 0;
 `;
 
@@ -48,6 +63,11 @@ const StyledTextArea = styled(TextArea) `
   }
 `;
 
+const ErrorMessage = styled.div`
+  margin-top: 10px;
+  color: red;
+`;
+
 interface IAppState {
   jsonInput: string;
   resultOutput: string;
@@ -68,6 +88,7 @@ class App extends React.Component<{}, IAppState> {
         sortAlphabetically: false,
         addExport: false,
         useArrayGeneric: false,
+        optionalFields: false,
         prefix: '',
         rootObjectName: 'RootObject'
       }
@@ -120,77 +141,90 @@ class App extends React.Component<{}, IAppState> {
     const { resultOutput, errorMessage, config } = this.state;
     return (
       <AppWrapper>
-        <Left>
-          <StyledForm flex={1}>
-            <div>
-              <Label basic={true} color="orange" pointing="below">Paste your JSON here</Label>
-            </div>
-            <StyledTextArea onChange={this.onJsonInputChange} />
-          </StyledForm>
-          <Divider />
-          <StyledForm flex={3}>
-            <div>
-              <Label basic={true} color="teal" pointing="below">See result here</Label>
-            </div>
-            <StyledTextArea value={resultOutput} />
-          </StyledForm>
-        </Left>
-        <Right>
-          <Segment>
-            <Options>
-              <Form>
-                <Form.Checkbox
-                  name="prependWithI"
-                  checked={config.prependWithI}
-                  label="Prepend with I"
-                  onChange={this.onOptionsFieldChange}
-                  toggle={true}
-                />
-                <Form.Checkbox
-                  name="sortAlphabetically"
-                  checked={config.sortAlphabetically}
-                  label="Sort Aphabetically"
-                  onChange={this.onOptionsFieldChange}
-                  toggle={true}
-                />
-                <Form.Checkbox
-                  name="addExport"
-                  checked={config.addExport}
-                  label="Add export statement"
-                  onChange={this.onOptionsFieldChange}
-                  toggle={true}
-                />
-                <Form.Checkbox
-                  name="useArrayGeneric"
-                  checked={config.useArrayGeneric}
-                  label="Use Array<> notation"
-                  onChange={this.onOptionsFieldChange}
-                  toggle={true}
-                />
-                <Divider />
-                <Form.Field>
-                  <input
-                    name="prefix"
-                    value={config.prefix}
+        <Header>
+          <div>
+            <h3>json => ts</h3>
+          </div>
+          <a target="_blank" href="https://github.com/beshanoe/json2ts">
+            <Icon name="github square" color="pink" size="large" link={true} />
+          </a>
+        </Header>
+        <Main>
+          <Left>
+            <StyledForm flex={1}>
+              <StyledTextArea placeholder="Put your JSON here" onChange={this.onJsonInputChange} />
+            </StyledForm>
+            <Divider />
+            <StyledForm flex={3}>
+              <StyledTextArea placeholder="See result here" value={resultOutput} />
+            </StyledForm>
+          </Left>
+          <Right>
+            <Segment>
+              <Options>
+                <Form onSubmit={this.convertJsonToTs}>
+                  <Form.Checkbox
+                    name="prependWithI"
+                    checked={config.prependWithI}
+                    label="Prepend with I"
                     onChange={this.onOptionsFieldChange}
-                    placeholder="Interface prexix"
+                    toggle={true}
                   />
-                </Form.Field>
-                <Form.Field>
-                  <input
-                    name="rootObjectName"
-                    value={config.rootObjectName}
+                  <Form.Checkbox
+                    name="sortAlphabetically"
+                    checked={config.sortAlphabetically}
+                    label="Sort Aphabetically"
                     onChange={this.onOptionsFieldChange}
-                    placeholder="Root object name"
+                    toggle={true}
                   />
-                </Form.Field>
-                <Divider />
-                <Button onClick={this.convertJsonToTs}>Convert</Button>
-                {errorMessage && (<div>{errorMessage}</div>)}
-              </Form>
-            </Options>
-          </Segment>
-        </Right>
+                  <Form.Checkbox
+                    name="addExport"
+                    checked={config.addExport}
+                    label="Add export statement"
+                    onChange={this.onOptionsFieldChange}
+                    toggle={true}
+                  />
+                  <Form.Checkbox
+                    name="useArrayGeneric"
+                    checked={config.useArrayGeneric}
+                    label="Use Array<> notation"
+                    onChange={this.onOptionsFieldChange}
+                    toggle={true}
+                  />
+                  <Form.Checkbox
+                    name="optionalFields"
+                    checked={config.optionalFields}
+                    label="Optional fields"
+                    onChange={this.onOptionsFieldChange}
+                    toggle={true}
+                  />
+                  <Divider />
+                  <Form.Field>
+                    <input
+                      name="prefix"
+                      value={config.prefix}
+                      onChange={this.onOptionsFieldChange}
+                      placeholder="Interface prexix"
+                    />
+                  </Form.Field>
+                  <Form.Field>
+                    <input
+                      name="rootObjectName"
+                      value={config.rootObjectName}
+                      onChange={this.onOptionsFieldChange}
+                      placeholder="Root object name"
+                    />
+                  </Form.Field>
+                  <Divider />
+                  <Button onClick={this.convertJsonToTs}>Convert</Button>
+                  {errorMessage && (
+                    <ErrorMessage>{errorMessage}</ErrorMessage>
+                  )}
+                </Form>
+              </Options>
+            </Segment>
+          </Right>
+        </Main>
       </AppWrapper>
     );
   }

@@ -7,6 +7,7 @@ interface IJson2TsConfigPrivate {
   sortAlphabetically: boolean;
   addExport: boolean;
   useArrayGeneric: boolean;
+  optionalFields: boolean;
   prefix: string;
   rootObjectName: string;
 }
@@ -31,6 +32,7 @@ export class Json2Ts {
       sortAlphabetically: false,
       addExport: false,
       useArrayGeneric: false,
+      optionalFields: false,
       prefix: '',
       rootObjectName: 'RootObject',
       ...config
@@ -107,7 +109,7 @@ export class Json2Ts {
   }
 
   private interfacesToString() {
-    const { sortAlphabetically, addExport } = this.config;
+    const { sortAlphabetically, addExport, optionalFields } = this.config;
     return Object.keys(this.interfaces).map(name => {
       const interfaceStr = [`${addExport ? 'export ' : ''}interface ${name} {`];
       const fields = Object.keys(this.interfaces[name]);
@@ -117,7 +119,7 @@ export class Json2Ts {
       fields
         .forEach(field => {
           const type = this.interfaces[name][field];
-          interfaceStr.push(`  ${field}: ${type};`);
+          interfaceStr.push(`  ${field}${optionalFields ? '?' : ''}: ${type};`);
         });
       interfaceStr.push('}\n');
       return interfaceStr.join('\n');
