@@ -1,11 +1,10 @@
-import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { injectGlobal } from 'styled-components';
-import 'semantic-ui-css/themes/../semantic.min.css';
+import { createGlobalStyle } from 'styled-components';
+import 'semantic-ui-css/semantic.css';
 import App from './App';
+import reportWebVitals from './reportWebVitals';
 
-// tslint:disable-next-line:no-unused-expression
-injectGlobal`
+const GlobalStyle = createGlobalStyle`
   * {
     box-sizing: border-box;
   }
@@ -27,6 +26,15 @@ injectGlobal`
 `;
 
 ReactDOM.render(
-  <App />,
-  document.getElementById('root') as HTMLElement
+  <>
+    <GlobalStyle />
+    <App />
+  </>,
+  document.getElementById('root')
 );
+
+
+// If you want to start measuring performance in your app, pass a function
+// to log results (for example: reportWebVitals(console.log))
+// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
+reportWebVitals();

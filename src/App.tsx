@@ -77,25 +77,22 @@ interface IAppState {
 
 class App extends React.Component<{}, IAppState> {
 
-  constructor() {
-    super();
-    this.state = {
-      jsonInput: '',
-      resultOutput: '',
-      errorMessage: '',
-      config: {
-        prependWithI: true,
-        sortAlphabetically: false,
-        addExport: false,
-        useArrayGeneric: false,
-        optionalFields: false,
-        prefix: '',
-        rootObjectName: 'RootObject'
-      }
-    };
-  }
+  state = {
+    jsonInput: '',
+    resultOutput: '',
+    errorMessage: '',
+    config: {
+      prependWithI: true,
+      sortAlphabetically: false,
+      addExport: false,
+      useArrayGeneric: false,
+      optionalFields: false,
+      prefix: '',
+      rootObjectName: 'RootObject'
+    }
+  };
 
-  convertJsonToTs = (e: React.SyntheticEvent<HTMLButtonElement>) => {
+  convertJsonToTs = (e: React.MouseEvent<HTMLButtonElement, MouseEvent> | React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const json2ts = new Json2Ts(this.state.config);
     this.setState({
@@ -109,7 +106,7 @@ class App extends React.Component<{}, IAppState> {
       });
     } catch (e) {
       this.setState({
-        errorMessage: e.message
+        errorMessage: (e as Error).message
       });
     }
 
@@ -123,8 +120,8 @@ class App extends React.Component<{}, IAppState> {
   }
 
   onOptionsFieldChange = (
-    e: React.ChangeEvent<HTMLInputElement>, data: { name?: string, checked?: boolean } | undefined = void 0) => {
-    const target = e.target;
+    e: React.FormEvent<HTMLInputElement>, data: { name?: string, checked?: boolean } | undefined = void 0) => {
+    const target = e.target as HTMLInputElement;
     const value = data ? data.checked : target.value;
     const name = data ? data.name : target.name;
     if (name) {
@@ -143,9 +140,9 @@ class App extends React.Component<{}, IAppState> {
       <AppWrapper>
         <Header>
           <div>
-            <h3>json => ts</h3>
+            <h3>json =&gt; ts</h3>
           </div>
-          <a target="_blank" href="https://github.com/beshanoe/json2ts">
+          <a target="_blank" rel="noreferrer" href="https://github.com/beshanoe/json2ts">
             <Icon name="github square" color="pink" size="large" link={true} />
           </a>
         </Header>
@@ -204,7 +201,7 @@ class App extends React.Component<{}, IAppState> {
                       name="prefix"
                       value={config.prefix}
                       onChange={this.onOptionsFieldChange}
-                      placeholder="Interface prexix"
+                      placeholder="Interface prefix"
                     />
                   </Form.Field>
                   <Form.Field>
