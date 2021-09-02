@@ -1,7 +1,3 @@
-type Partial<T> = {
-  [P in keyof T]?: T[P];
-};
-
 interface IJson2TsConfigPrivate {
   prependWithI: boolean;
   sortAlphabetically: boolean;
@@ -18,11 +14,7 @@ export class Json2Ts {
 
   private config: IJson2TsConfigPrivate;
 
-  private interfaces: {
-    [name: string]: {
-      [field: string]: string;
-    }
-  } = {};
+  private interfaces: Record<string, Record<string, string>> = {};
 
   constructor(
     config: IJson2TsConfig = {}
@@ -86,7 +78,7 @@ export class Json2Ts {
     return [first.toUpperCase(), ...rest].join('');
   }
 
-  private objectToTS(obj: {}, type: string = this.config.rootObjectName) {
+  private objectToTS(obj: Record<string, any> | null, type: string = this.config.rootObjectName) {
     if (obj === null) {
       return 'any';
     }
